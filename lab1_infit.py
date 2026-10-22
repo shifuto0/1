@@ -78,23 +78,23 @@ def skip_right_bracket():
 
 def parse_comparison():
     global pos
-    left = parse_expression()
+    left = parse_sum_diff()
     if current() == ("OP", "!="):
         pos += 1
-        right = parse_expression()
+        right = parse_sum_diff()
         if left != right:
             return 1
         return 0
     return left
 
 
-def parse_expression():
+def parse_sum_diff():
     global pos
-    result = parse_term()
+    result = parse_mul_div()
     while current() in (("OP", "+"), ("OP", "-")):
         operator = current()[1]
         pos += 1
-        right = parse_term()
+        right = parse_mul_div()
         if operator == "+":
             result = result + right
         else:
@@ -102,7 +102,7 @@ def parse_expression():
     return result
 
 
-def parse_term():
+def parse_mul_div():
     global pos
     result = parse_unary()
     while current() in (("OP", "*"), ("OP", "/")):
@@ -126,10 +126,10 @@ def parse_unary():
     if current() == ("OP", "+"):
         pos += 1
         return parse_unary()
-    return parse_primary()
+    return parse_value()
 
 
-def parse_primary():
+def parse_value():
     global pos
     kind, value = current()
 
